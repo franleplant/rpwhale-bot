@@ -688,6 +688,15 @@
     aggregate-error "^3.1.0"
     debug "^4.0.0"
 
+"@probot/adapter-aws-lambda-serverless@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@probot/adapter-aws-lambda-serverless/-/adapter-aws-lambda-serverless-2.0.1.tgz#5f9f1407f56a60909b7b034f5f88a150abcc2026"
+  integrity sha512-4Ho4M91h4lnu5AjI+xy9ABgeN1/HaaO40qQ6i8DGXJLoI0KsdkqoCyTd6Axu81ingA8nuTlBp8+p69KBECOrag==
+  dependencies:
+    "@probot/get-private-key" "^1.1.0"
+    lowercase-keys "^2.0.0"
+    probot "^11.0.6"
+
 "@probot/get-private-key@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@probot/get-private-key/-/get-private-key-1.1.0.tgz#d29abe3d2b5130701234dc23d0cd2f220f55bbc1"
@@ -813,6 +822,11 @@
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-1.1.2.tgz#ccb91445360179a04e7fe6aff78c00ffc1eeaf82"
   integrity sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==
+
+"@types/aws-lambda@^8.10.76":
+  version "8.10.76"
+  resolved "https://registry.yarnpkg.com/@types/aws-lambda/-/aws-lambda-8.10.76.tgz#a20191677f1f5e32fe1f26739b1d6fbbea9cf636"
+  integrity sha512-lCTyeRm3NWqSwDnoji0z82Pl0tsOpr1p+33AiNeidgarloWXh3wdiVRUuxEa+sY9S5YLOYGz5X3N3Zvpibvm5w==
 
 "@types/babel__core@^7.0.0", "@types/babel__core@^7.1.7":
   version "7.1.14"
@@ -4606,7 +4620,7 @@ pretty-format@^26.0.0, pretty-format@^26.6.2:
     ansi-styles "^4.0.0"
     react-is "^17.0.1"
 
-probot@^11.0.1:
+probot@^11.0.1, probot@^11.0.6:
   version "11.3.2"
   resolved "https://registry.yarnpkg.com/probot/-/probot-11.3.2.tgz#1260d63b645225105974056cc7a38228811d564b"
   integrity sha512-JN+jzjkVAHFj6pBQgvO27vjW9IwA9QOtSLNxxak4rnalNSo09u1Srr01TlqYoalbsNiwbVx2tXvBSDZZLkXCcw==

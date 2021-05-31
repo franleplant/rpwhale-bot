@@ -1,4 +1,10 @@
+import "./declarations.d.ts"
+import * as aws from "aws-lambda";
 import { Probot } from "probot";
+import {
+  createLambdaFunction,
+  createProbot,
+} from "@probot/adapter-aws-lambda-serverless";
 import { JsonRpc } from "eosjs";
 import fetch from "node-fetch";
 
@@ -185,3 +191,7 @@ export async function getDonations(): Promise<{
 
   return featureDonations;
 }
+
+export const lambdaHandler: aws.Handler = createLambdaFunction(rpWhaleBot, {
+  probot: createProbot(),
+});

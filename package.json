@@ -22,12 +22,14 @@
     "test:format": "prettier --check"
   },
   "dependencies": {
+    "@probot/adapter-aws-lambda-serverless": "^2.0.1",
     "@waxio/waxjs": "^0.0.15",
     "eosjs": "^22.0.0",
     "node-fetch": "^2.6.1",
     "probot": "^11.0.1"
   },
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.76",
     "@types/jest": "^26.0.19",
     "@types/node": "^14.14.19",
     "@types/node-fetch": "^2.5.10",

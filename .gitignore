@@ -7,3 +7,4 @@ coverage
 lib
 package-lock.json
 .husky
+lib
