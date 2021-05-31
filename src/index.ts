@@ -1,4 +1,4 @@
-import "./declarations.d.ts"
+/// <reference path='./declarations.d.ts' />
 import * as aws from "aws-lambda";
 import { Probot } from "probot";
 import {
