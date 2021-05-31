@@ -1,4 +1,5 @@
 /// <reference path='./declarations.d.ts' />
+import "dotenv/config";
 import * as aws from "aws-lambda";
 import { Probot } from "probot";
 import {
@@ -8,10 +9,10 @@ import {
 import { JsonRpc } from "eosjs";
 import fetch from "node-fetch";
 
-const REPO = "rpwhale-bot";
-const OWNER = "franleplant";
-const BOT_USER = "rpwhale-bot-v2[bot]";
-const DONATIONS_ACCOUNT = "glrrk.wam";
+const REPO = process.env.REPO || "";
+const OWNER = process.env.OWNER || "";
+const BOT_USER = process.env.BOT_USER || "";
+const DONATIONS_ACCOUNT = process.env.DONATIONS_ACCOUNT || "";
 
 export default function rpWhaleBot(app: Probot) {
   app.on("workflow_run", async (context) => {
