@@ -91,7 +91,7 @@ export function getDonationsSummary(donations?: IFeatureDonations): string {
   }
 
   return `
-- ${donations.donations.length} donations totaling ${donations.wax} wax
+- ${donations.donations.length} donations totaling **${donations.wax} wax**
 
 Donators:
 
