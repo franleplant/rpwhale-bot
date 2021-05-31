@@ -80,7 +80,7 @@ export function getDonationsBody(donations?: IFeatureDonations): string {
 
 ${getDonationsSummary(donations)}
 
-[Place a bounty](TODO) to get this feature done!
+[Place a bounty](https://www.rpwhale.online) to get this feature done!
 Higher bounty features get done first and faster.
   `;
 }
