@@ -6,13 +6,12 @@ import {
   createLambdaFunction,
   createProbot,
 } from "@probot/adapter-aws-lambda-serverless";
-import { JsonRpc } from "eosjs";
-import fetch from "node-fetch";
+import * as Donations from "./donations";
+import { renderDonations, getDonationsFromBody } from "./renderComment";
 
 const REPO = process.env.REPO || "";
 const OWNER = process.env.OWNER || "";
 const BOT_USER = process.env.BOT_USER || "";
-const DONATIONS_ACCOUNT = process.env.DONATIONS_ACCOUNT || "";
 
 export default function rpWhaleBot(app: Probot) {
   app.on("workflow_run", async (context) => {
@@ -31,9 +30,9 @@ export default function rpWhaleBot(app: Probot) {
       featureRequests.headers.link
     );
 
-    let donations: { [featureId: number]: IFeatureDonations };
+    let donations: Donations.IDonationSummaryMap;
     try {
-      donations = await getDonations();
+      donations = await Donations.fetchDonations();
       console.log(`got donations`, donations);
     } catch (err) {
       console.log(`error getting donations`, err);
@@ -60,11 +59,17 @@ export default function rpWhaleBot(app: Probot) {
           throw new Error(`no bot comment yet`);
         }
 
+        const cachedDonations = getDonationsFromBody(comment.body || "");
+        const summary = Donations.calcDonationsSummary(id, [
+          ...donations[id].donations,
+          ...cachedDonations,
+        ]);
+
         console.log("updating comment");
         return context.octokit.issues.updateComment({
           repo: REPO,
           owner: OWNER,
-          body: getDonationsBody(donations[id]),
+          body: renderDonations(summary),
           comment_id: comment.id,
         });
       } catch (err) {
@@ -73,7 +78,7 @@ export default function rpWhaleBot(app: Probot) {
           repo: REPO,
           owner: OWNER,
           issue_number: id,
-          body: getDonationsBody(),
+          body: renderDonations(),
         });
       }
     });
@@ -89,7 +94,7 @@ export default function rpWhaleBot(app: Probot) {
 
   app.on("issues.opened", async (context) => {
     const issueComment = context.issue({
-      body: getDonationsBody(),
+      body: renderDonations(),
     });
     await context.octokit.issues.createComment(issueComment);
   });
@@ -98,120 +103,6 @@ export default function rpWhaleBot(app: Probot) {
 
   // To get your app running against GitHub, see:
   // https://probot.github.io/docs/development/
-}
-
-export function getDonationsBody(donations?: IFeatureDonations): string {
-  return `
-**Feature Bounty**
-
-${getDonationsSummary(donations)}
-
-[Place a bounty](https://www.rpwhale.online) to get this feature done!
-Higher bounty features get done first and faster.
-  `;
-}
-
-export function getDonationsSummary(donations?: IFeatureDonations): string {
-  if (!donations) {
-    return "";
-  }
-
-  return `
-- ${donations.donations.length} donations totaling **${donations.wax} wax**
-
-Donators:
-
-${donations.donations
-  .map(({ from, wax }) => `- ${from} donated ${wax} wax`)
-  .join("\n")}
-`;
-}
-
-let _rpc: JsonRpc | undefined;
-export function getRpc(): JsonRpc {
-  if (!_rpc) {
-    _rpc = new JsonRpc("https://wax.greymass.com", { fetch });
-  }
-
-  return _rpc;
-}
-
-export interface IFeatureDonations {
-  featureId: number;
-  wax: number;
-  donations: Array<IDonation>;
-}
-
-export interface IDonation {
-  from: string;
-  wax: number;
-}
-
-// TODO deal with more than one page
-export async function getDonations(): Promise<{
-  [featureId: number]: IFeatureDonations;
-}> {
-  const rpc = getRpc();
-
-  const actions = await rpc.history_get_actions(DONATIONS_ACCOUNT);
-
-  const featMap: { [featureId: number]: Array<IDonation> } = {};
-
-  for (const action of actions.actions) {
-    const data: any = action.action_trace?.act?.data;
-    const account: string = action.action_trace?.act?.account || "";
-    const name: string = action.action_trace?.act?.name || "";
-    const memo: string = data?.memo || "";
-    // skip transactions that don't have the special memo,
-    // and transactions that are anything else besides sending wax
-    if (
-      !(
-        memo.includes("____feature") &&
-        account === "eosio.token" &&
-        name === "transfer"
-      )
-    ) {
-      continue;
-    }
-
-    const from: string = data?.from || "";
-    const quantityStr: string = data?.quantity || "";
-
-    let wax = 0;
-    if (quantityStr.includes("WAX")) {
-      wax = Number(quantityStr.split(" ")[0] || 0);
-    }
-
-    let featureId: number | undefined;
-    try {
-      featureId = Number(memo.split(":")[1]);
-    } catch (err) {
-      console.warn(`error inferring feature id out of memo ${memo}`, err);
-    }
-
-    if (!featureId) {
-      continue;
-    }
-
-    if (!featMap[featureId]) {
-      featMap[featureId] = [];
-    }
-
-    featMap[featureId].push({ from, wax });
-  }
-
-  const featureDonations: { [featureId: number]: IFeatureDonations } = {};
-  for (const [featureId, donations] of Object.entries(featMap)) {
-    const wax = donations.reduce((total, donation) => total + donation.wax, 0);
-
-    featureDonations[Number(featureId)] = {
-      featureId: Number(featureId),
-      wax,
-      donations,
-    };
-  }
-
-  return featureDonations;
 }
 
 export const lambdaHandler: aws.Handler = createLambdaFunction(rpWhaleBot, {
