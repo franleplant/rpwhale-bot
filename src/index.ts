@@ -24,6 +24,8 @@ export default function rpWhaleBot(app: Probot) {
       labels: "feature",
     });
 
+    console.log("got feature requests", featureRequests.data)
+
     console.log(
       "feature requests, is there more?",
       featureRequests.headers.link
