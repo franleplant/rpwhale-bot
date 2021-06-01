@@ -58,6 +58,7 @@ export default function rpWhaleBot(app: Probot) {
           comment_id: comment.id,
         });
       } catch (err) {
+        console.log("creating comment")
         await context.octokit.issues.createComment({
           repo: REPO,
           owner: OWNER,
