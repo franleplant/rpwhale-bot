@@ -78,12 +78,12 @@ export default function rpWhaleBot(app: Probot) {
       }
     });
 
-    console.log("awaiting all tasks for each featureRequest")
+    console.log("awaiting all tasks for each featureRequest");
     try {
-    const res = await Promise.all(tasks);
-    console.log("done!", res);
+      const res = await Promise.all(tasks);
+      console.log("done!", res);
     } catch (err) {
-      console.error("general error", err)
+      console.error("general error", err);
     }
   });
 
@@ -121,7 +121,9 @@ export function getDonationsSummary(donations?: IFeatureDonations): string {
 
 Donators:
 
-${donations.donations.map(({ from, wax }) => `- ${from} donated ${wax} wax`)}
+${donations.donations
+  .map(({ from, wax }) => `- ${from} donated ${wax} wax`)
+  .join("\n")}
 `;
 }
 
