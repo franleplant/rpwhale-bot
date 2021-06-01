@@ -79,8 +79,12 @@ export default function rpWhaleBot(app: Probot) {
     });
 
     console.log("awaiting all tasks for each featureRequest")
+    try {
     const res = await Promise.all(tasks);
     console.log("done!", res);
+    } catch (err) {
+      console.error("general error", err)
+    }
   });
 
   app.on("issues.opened", async (context) => {
