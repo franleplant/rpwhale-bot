@@ -40,7 +40,7 @@ export default function rpWhaleBot(app: Probot) {
       throw new Error(`error talking to eos`);
     }
 
-    featureRequests.data.map(async (feat) => {
+    await Promise.all(featureRequests.data.map(async (feat) => {
       const id = feat.number;
 
       try {
@@ -79,7 +79,7 @@ export default function rpWhaleBot(app: Probot) {
 
         console.log("createComment success", res);
       }
-    });
+    }));
   });
 
   app.on("issues.opened", async (context) => {
