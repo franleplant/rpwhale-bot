@@ -34,7 +34,7 @@ export default function rpWhaleBot(app: Probot) {
     let donations: { [featureId: number]: IFeatureDonations };
     try {
       donations = await getDonations();
-      console.log(`got donations ${Object.keys(donations).length}`);
+      console.log(`got donations`, donations);
     } catch (err) {
       console.log(`error getting donations`, err);
       throw new Error(`error talking to eos`);
