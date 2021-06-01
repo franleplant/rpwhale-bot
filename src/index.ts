@@ -60,8 +60,9 @@ export default function rpWhaleBot(app: Probot) {
         }
 
         const cachedDonations = getDonationsFromBody(comment.body || "");
+        const newDonations = donations[id]?.donations || []
         const summary = Donations.calcDonationsSummary(id, [
-          ...donations[id].donations,
+          ...newDonations,
           ...cachedDonations,
         ]);
 

@@ -37,7 +37,6 @@ Higher bounty features get done first and faster.
 ${DONATIONS_CACHE_START}
 ${JSON.stringify(donations || [])}
 ${DONATIONS_CACHE_END}
-
   `;
 }
 
