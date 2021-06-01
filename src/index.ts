@@ -58,20 +58,24 @@ export default function rpWhaleBot(app: Probot) {
           throw new Error(`no bot comment yet`);
         }
 
-        await context.octokit.issues.updateComment({
+        const res = await context.octokit.issues.updateComment({
           repo: REPO,
           owner: OWNER,
           body: getDonationsBody(donations[id]),
           comment_id: comment.id,
         });
+
+        console.log("updatedComment success", res);
       } catch (err) {
-        console.log("creating comment");
-        await context.octokit.issues.createComment({
+        console.log("creating comment, because", err);
+        const res = await context.octokit.issues.createComment({
           repo: REPO,
           owner: OWNER,
           issue_number: id,
           body: getDonationsBody(),
         });
+
+        console.log("createComment success", res);
       }
     });
   });
