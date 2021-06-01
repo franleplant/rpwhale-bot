@@ -24,7 +24,7 @@ export default function rpWhaleBot(app: Probot) {
       labels: "feature",
     });
 
-    console.log("got feature requests", featureRequests.data)
+    console.log("got feature requests", featureRequests.data);
 
     console.log(
       "feature requests, is there more?",
@@ -40,7 +40,7 @@ export default function rpWhaleBot(app: Probot) {
       throw new Error(`error talking to eos`);
     }
 
-    const res = await Promise.all(featureRequests.data.map(async (feat) => {
+    const tasks = featureRequests.data.map(async (feat) => {
       const id = feat.number;
 
       try {
@@ -60,14 +60,13 @@ export default function rpWhaleBot(app: Probot) {
           throw new Error(`no bot comment yet`);
         }
 
-        console.log("updating comment")
+        console.log("updating comment");
         return context.octokit.issues.updateComment({
           repo: REPO,
           owner: OWNER,
           body: getDonationsBody(donations[id]),
           comment_id: comment.id,
         });
-
       } catch (err) {
         console.log("creating comment, because", err);
         return context.octokit.issues.createComment({
@@ -77,9 +76,11 @@ export default function rpWhaleBot(app: Probot) {
           body: getDonationsBody(),
         });
       }
-    }));
+    });
 
-    console.log("done!", res)
+    console.log("awaiting all tasks for each featureRequest")
+    const res = await Promise.all(tasks);
+    console.log("done!", res);
   });
 
   app.on("issues.opened", async (context) => {
