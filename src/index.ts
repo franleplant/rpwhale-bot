@@ -29,7 +29,14 @@ export default function rpWhaleBot(app: Probot) {
       featureRequests.headers.link
     );
 
-    const donations = await getDonations();
+    let donations: { [featureId: number]: IFeatureDonations };
+    try {
+      donations = await getDonations();
+      console.log(`got donations ${Object.keys(donations).length}`);
+    } catch (err) {
+      console.log(`error getting donations`, err);
+      throw new Error(`error talking to eos`);
+    }
 
     featureRequests.data.map(async (feat) => {
       const id = feat.number;
@@ -58,7 +65,7 @@ export default function rpWhaleBot(app: Probot) {
           comment_id: comment.id,
         });
       } catch (err) {
-        console.log("creating comment")
+        console.log("creating comment");
         await context.octokit.issues.createComment({
           repo: REPO,
           owner: OWNER,
